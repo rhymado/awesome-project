@@ -2,6 +2,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
+import Auth from './screens/Auth';
 import Home from './screens/Home';
 import Profile from './screens/Profile';
 import PokemonList from './screens/Pokemon';
@@ -28,7 +29,7 @@ const Pokemon = () => (
   </Stack.Navigator>
 );
 
-const Router = () => (
+const Content = () => (
   <Tab.Navigator
     initialRouteName="Profile"
     screenOptions={{
@@ -45,6 +46,13 @@ const Router = () => (
       }}
     />
   </Tab.Navigator>
+);
+
+const Router = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Auth" component={Auth} />
+    <Stack.Screen name="Content" component={Content} />
+  </Stack.Navigator>
 );
 
 export default Router;
