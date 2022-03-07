@@ -6,10 +6,12 @@ import {
   Image,
   TextInput,
   Button,
+  Keyboard,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
+import EventEmitter from 'events';
 
 import {SECRET} from '@env';
 
@@ -19,6 +21,42 @@ const Profile = ({navigation, route}) => {
   const [input, setInput] = useState('');
   const counter = useSelector(state => state.counter);
   const dispatch = useDispatch();
+  const myEmitter = useMemo(() => new EventEmitter(), []);
+  // listener event custom
+  useEffect(() => {
+    const cb = counter => console.log('counter saat ini =', counter);
+    myEmitter.on('counter_change', cb);
+
+    return () => myEmitter.off('counter_change', cb);
+  }, [myEmitter]);
+  // listener keyboard android
+  useEffect(() => {
+    const showListener = Keyboard.addListener('keyboardDidShow', () =>
+      console.log('Keyboard Muncul'),
+    );
+    const hideListener = Keyboard.addListener('keyboardDidHide', () =>
+      console.log('Keyboard Disembunyikan'),
+    );
+
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
+  // listener navigation
+  useEffect(() => {
+    const focusListener = navigation.addListener('focus', () => {
+      console.log('Selamat Datang');
+    });
+    const blurListener = navigation.addListener('blur', () => {
+      console.log('Selamat Jalan');
+    });
+    return () => {
+      focusListener();
+      blurListener();
+    };
+  });
+  // async storage
   useEffect(() => {
     const getInputFromStorage = async () => {
       try {
@@ -82,20 +120,22 @@ const Profile = ({navigation, route}) => {
           <Text>Counter: {counter}</Text>
           <TouchableOpacity
             style={styles.backToHomeButton}
-            onPress={() =>
+            onPress={() => {
               dispatch({
                 type: 'UP',
-              })
-            }>
+              });
+              myEmitter.emit('counter_change', counter + 1);
+            }}>
             <Text>UP</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.backToHomeButton}
-            onPress={() =>
+            onPress={() => {
               dispatch({
                 type: 'DOWN',
-              })
-            }>
+              });
+              myEmitter.emit('counter_change', counter - 1);
+            }}>
             <Text>DOWN</Text>
           </TouchableOpacity>
         </View>
