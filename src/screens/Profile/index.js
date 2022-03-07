@@ -14,6 +14,11 @@ import {useSelector, useDispatch} from 'react-redux';
 import EventEmitter from 'events';
 
 import {SECRET} from '@env';
+import {
+  sendLocalNotification,
+  sendScheduledNotification,
+  cancelAllLocalNotification,
+} from '../../utils/notification';
 
 import styles from '../../styles/Profile';
 
@@ -140,6 +145,36 @@ const Profile = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
         <Text>{SECRET}</Text>
+        <View>
+          <TouchableOpacity
+            style={styles.backToHomeButton}
+            onPress={() => {
+              sendLocalNotification({
+                title: 'Welcome',
+                message: 'Ini adalah notifikasi lokal dari app',
+              });
+            }}>
+            <Text>Send Local Notification</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backToHomeButton}
+            onPress={() => {
+              sendScheduledNotification({
+                title: 'Jadwal Sholat',
+                message: 'Waktu Zuhur',
+                date: new Date(Date.now() + 5 * 1000),
+              });
+            }}>
+            <Text>Send Scheduled Notification</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backToHomeButton}
+            onPress={() => {
+              cancelAllLocalNotification();
+            }}>
+            <Text>Cancel All Local Notification</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
