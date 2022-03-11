@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
   Keyboard,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState, useEffect, useMemo} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,12 +19,15 @@ import {
   sendLocalNotification,
   sendScheduledNotification,
   cancelAllLocalNotification,
+  unsubscribeFrom,
+  subscribeTo,
 } from '../../utils/notification';
 
 import styles from '../../styles/Profile';
 
 const Profile = ({navigation, route}) => {
   const [input, setInput] = useState('');
+  const [topic, setTopic] = useState('');
   const counter = useSelector(state => state.counter);
   const dispatch = useDispatch();
   const myEmitter = useMemo(() => new EventEmitter(), []);
@@ -173,6 +177,38 @@ const Profile = ({navigation, route}) => {
               cancelAllLocalNotification();
             }}>
             <Text>Cancel All Local Notification</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{marginTop: 10}}>
+          <Text style={{fontSize: 25, fontWeight: '800'}}>Topic</Text>
+          <TextInput
+            style={{borderColor: '#000', borderWidth: 2, marginVertical: 20}}
+            value={topic}
+            onChangeText={text => {
+              setTopic(text);
+            }}
+          />
+          <TouchableOpacity
+            style={styles.backToHomeButton}
+            onPress={() => {
+              subscribeTo(topic);
+              ToastAndroid.show(
+                `Berhasil Subscribe ke topik ${topic}`,
+                ToastAndroid.SHORT,
+              );
+            }}>
+            <Text>Subscribe</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backToHomeButton}
+            onPress={() => {
+              unsubscribeFrom(topic);
+              ToastAndroid.show(
+                `Berhasil Unsubscribe ke topik ${topic}`,
+                ToastAndroid.SHORT,
+              );
+            }}>
+            <Text>Unsubscribe</Text>
           </TouchableOpacity>
         </View>
       </View>

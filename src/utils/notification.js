@@ -21,3 +21,11 @@ export const sendScheduledNotification = ({title, message, date}) => {
 export const cancelAllLocalNotification = () => {
   PushNotification.cancelAllLocalNotifications();
 };
+
+export const subscribeTo = topic => {
+  PushNotification.subscribeToTopic(topic);
+};
+
+export const unsubscribeFrom = topic => {
+  PushNotification.unsubscribeFromTopic(topic);
+};
